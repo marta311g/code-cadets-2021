@@ -8,43 +8,36 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
-type serverData struct {
+type jobApplication struct {
 	Name string
 	Age int
 	Passed bool
 	Skills []string
 }
 
-const applicationsURL = "https://run.mocky.io/v3/f7ceece5-47ee-4955-b974-438982267dc8"
+const jobApplicationsURL = "https://run.mocky.io/v3/f7ceece5-47ee-4955-b974-438982267dc8"
 
 func linearBackoff(retry int) time.Duration {
 	return time.Duration(retry) * time.Second
 }
 
 func containsJavaOrGo(skills []string) bool {
-	for _, val := range skills {
-		if val == "Java" || val == "Go" {
+	for _, skill := range skills {
+		if skill == "Java" || skill == "Go" {
 			return true
 		}
 	}
 	return false
 }
 
-func writePeopleInFile(f *os.File, data []serverData) {
-	for _, val := range data {
-		if val.Passed && containsJavaOrGo(val.Skills){
-			var allSkills string
-			for idx, value := range val.Skills {
-				if idx != 0 {
-					allSkills += ", " + value
-				} else {
-					allSkills += " - " + value
-				}
-			}
-			defer f.WriteString(fmt.Sprint(val.Name + allSkills) + "\n")
+func writePeopleInFile(f *os.File, jobApplications []jobApplication) {
+	for _, application := range jobApplications {
+		if application.Passed && containsJavaOrGo(application.Skills){
+			f.WriteString(fmt.Sprintf("%s - %s\n", application.Name, strings.Join(application.Skills, ", ")))
 		}
 	}
 }
@@ -53,7 +46,7 @@ func main() {
 	httpClient := pester.New()
 	httpClient.Backoff = linearBackoff
 
-	httpResponse, err := httpClient.Get(applicationsURL)
+	httpResponse, err := httpClient.Get(jobApplicationsURL)
 	if err != nil {
 		log.Fatal(
 			errors.WithMessage(err, "HTTP get towards yesno API"),
@@ -67,22 +60,22 @@ func main() {
 		)
 	}
 
-	var decodedContent []serverData
-	err = json.Unmarshal(bodyContent, &decodedContent)
+	var jobApplications []jobApplication
+	err = json.Unmarshal(bodyContent, &jobApplications)
 	if err != nil {
 		log.Fatal(
 			errors.WithMessage(err, "unmarshalling the JSON body content"),
 		)
 	}
 
-	f, err := os.Create("output.txt")
+	file, err := os.Create("output.txt")
 	if err != nil {
 		log.Fatal(
 			errors.WithMessage(err, "opening a file"),
 		)
 	}
+	defer file.Close()
 
-	defer f.Close()
-	writePeopleInFile(f, decodedContent)
-	f.Sync()
+	writePeopleInFile(file, jobApplications)
+	file.Sync()
 }
