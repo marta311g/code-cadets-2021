@@ -1,18 +1,19 @@
 package main
 
 import (
+	"flag"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	start := 10
-	end := 20
+	start := flag.Int("start", 0, "fizzbuzz start argument")
+	end := flag.Int("end", 20, "fizzbuzz end argument")
+	flag.Parse()
 	fizzbuzzOutputList := []string{}
 
-
 	// version 1: with array - saving elements then printing
-	for i := start; i <= end; i++ {
+	for i := *start; i <= *end; i++ {
 		if i % 3 == 0 && i % 5 == 0 {
 			fizzbuzzOutputList = append(fizzbuzzOutputList, "FizzBuzz")
 		} else if  i % 3 == 0 {
@@ -26,7 +27,7 @@ func main() {
 	println(strings.Join(fizzbuzzOutputList, " "))
 
 	// version 2: without array - printing elements
-	for i := start; i <= end; i++ {
+	for i := *start; i <= *end; i++ {
 		if i % 3 == 0 && i % 5 == 0 {
 			print("FizzBuzz ")
 		} else if  i % 3 == 0 {
