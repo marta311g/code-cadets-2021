@@ -53,7 +53,7 @@ func makeTaxBracket(lineElements []string) taxBracket {
 func getTaxBrackets() []taxBracket {
 	var taxBrackets []taxBracket
 
-	f, err := os.Open("./homework_1/brackets.txt")
+	f, err := os.Open("brackets.txt")
 	if err != nil {
 		log.Fatal( errors.WithMessage(err, "error while opening a file"), )
 	}
@@ -79,6 +79,7 @@ func main() {
 	var inputValue float64
 	fmt.Print("Please, enter input value: ")
 	fmt.Scanf("%f", &inputValue)
+	//add error
 
 	var taxBrackets = getTaxBrackets()
 
