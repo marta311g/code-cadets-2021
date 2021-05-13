@@ -1,8 +1,7 @@
-package main
+package tax
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"math"
 	"os"
@@ -18,7 +17,7 @@ type taxBracket struct {
 	Percentage float64
 }
 
-func calculateTax(inputValue float64, taxBrackets []taxBracket) float64 {
+func CalculateTax(inputValue float64, taxBrackets []taxBracket) float64 {
 	var tax float64
 	for index, bracket := range taxBrackets {
 		if inputValue <= 0 {
@@ -50,12 +49,12 @@ func makeTaxBracket(lineElements []string) taxBracket {
 	return taxBracket{ lowerLimit, upperLimit, percentage}
 }
 
-func getTaxBrackets() []taxBracket {
+func GetTaxBrackets() ([]taxBracket, error) {
 	var taxBrackets []taxBracket
 
 	f, err := os.Open("brackets.txt")
 	if err != nil {
-		log.Fatal( errors.WithMessage(err, "error while opening a file"), )
+		return nil, err
 	}
 
 	scanner := bufio.NewScanner(f)
@@ -72,16 +71,5 @@ func getTaxBrackets() []taxBracket {
 	for _, line := range text {
 		taxBrackets = append(taxBrackets, makeTaxBracket(strings.Split(line, ";")))
 	}
-	return taxBrackets
-}
-
-func main() {
-	var inputValue float64
-	fmt.Print("Please, enter input value: ")
-	fmt.Scanf("%f", &inputValue)
-	//add error
-
-	var taxBrackets = getTaxBrackets()
-
-	fmt.Printf("Za ulaznu vrijednost %.2f iznos poreza je: %.2f\n", inputValue, calculateTax(inputValue, taxBrackets))
+	return taxBrackets, nil
 }
