@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	start := flag.Int("start", 0, "fizzbuzz start argument")
+	start := flag.Int("start", 1, "fizzbuzz start argument")
 	end := flag.Int("end", 20, "fizzbuzz end argument")
 	flag.Parse()
 
