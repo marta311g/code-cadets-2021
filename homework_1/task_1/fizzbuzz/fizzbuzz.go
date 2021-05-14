@@ -6,12 +6,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Fizzbuzz(start, end int) ([]string, error){
+func GetForRange(start, end int) ([]string, error){
 	if end < start {
-		return nil, errors.New("The end flag should be greater that the start flag.")
+		return nil, errors.New("the end flag should be greater that the start flag")
 	}
 	if start < 1 {
-		return nil, errors.New("The start flag should be greater that zero.")
+		return nil, errors.New("the start flag should be greater that zero")
 	}
 
 	fizzbuzzOutputList := []string{}

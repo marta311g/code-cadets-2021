@@ -13,7 +13,7 @@ func main() {
 	end := flag.Int("end", 20, "fizzbuzz end argument")
 	flag.Parse()
 
-	fizzbuzzOutputList, err := fizzbuzz.Fizzbuzz(*start, *end)
+	fizzbuzzOutputList, err := fizzbuzz.GetForRange(*start, *end)
 	if err != nil {
 		log.Fatal(err)
 	}
