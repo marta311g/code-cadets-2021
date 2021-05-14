@@ -25,6 +25,13 @@ func getTestCases() []testCase {
 			expectingError:  false,
 		},
 		{
+			inputStart: 5,
+			inputEnd: 18,
+
+			expectedOutput: []string{"Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz", "16", "17", "Fizz"},
+			expectingError:  false,
+		},
+		{
 			inputStart: 1,
 			inputEnd: 1,
 
@@ -40,6 +47,12 @@ func getTestCases() []testCase {
 		{
 			inputStart: 0,
 			inputEnd: 1,
+
+			expectingError:  true,
+		},
+		{
+			inputStart: 0,
+			inputEnd: 0,
 
 			expectingError:  true,
 		},
