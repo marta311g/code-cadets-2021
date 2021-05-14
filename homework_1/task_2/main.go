@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"code-cadets-2021/homework_1/task_1/progressive_tax"
+	"code-cadets-2021/homework_1/task_1/tax"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 	}
 
 	//the brackets are defined in file "brackets.txt"
-	taxBrackets, err := tax.GetTaxBrackets("brackets.txt")
+	taxBrackets, err := tax.GetTaxBracketsFromFile("brackets.txt")
 	if err != nil {
 		log.Fatal(errors.WithMessage(err, "Error while creating tax brackets."))
 	}

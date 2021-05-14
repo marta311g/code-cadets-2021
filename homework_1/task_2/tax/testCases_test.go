@@ -1,11 +1,11 @@
 package tax_test
 
-import "code-cadets-2021/homework_1/task_1/progressive_tax"
+import "code-cadets-2021/homework_1/task_1/tax"
 
 
 type calculateTaxTestCase struct {
 	inputValue float64
-	inputTextBrackets []tax.TaxBracket
+	inputTaxBrackets []tax.TaxBracket
 
 	expectedOutput float64
 	expectingError bool
@@ -23,7 +23,7 @@ func getCalculateTaxTestCases() []calculateTaxTestCase {
 	return []calculateTaxTestCase {
 		{
 			inputValue: 7000,
-			inputTextBrackets: []tax.TaxBracket{
+			inputTaxBrackets: []tax.TaxBracket{
 				tax.TaxBracket{0, 1000, 0},
 				tax.TaxBracket{1000, 5000, 0.1},
 				tax.TaxBracket{5000, 10000, 0.2},
@@ -35,7 +35,7 @@ func getCalculateTaxTestCases() []calculateTaxTestCase {
 		},
 		{
 			inputValue: 0,
-			inputTextBrackets: []tax.TaxBracket{
+			inputTaxBrackets: []tax.TaxBracket{
 				tax.TaxBracket{0, 1000, 0},
 				tax.TaxBracket{1000, 5000, 0.1},
 				tax.TaxBracket{5000, 10000, 0.2},
@@ -47,7 +47,7 @@ func getCalculateTaxTestCases() []calculateTaxTestCase {
 		},
 		{
 			inputValue: 1000,
-			inputTextBrackets: []tax.TaxBracket{
+			inputTaxBrackets: []tax.TaxBracket{
 				tax.TaxBracket{0, 1000, 0},
 				tax.TaxBracket{1000, 5000, 0.1},
 				tax.TaxBracket{5000, 10000, 0.2},
@@ -59,7 +59,7 @@ func getCalculateTaxTestCases() []calculateTaxTestCase {
 		},
 		{
 			inputValue: 5000,
-			inputTextBrackets: []tax.TaxBracket{
+			inputTaxBrackets: []tax.TaxBracket{
 				tax.TaxBracket{0, 1000, 0},
 				tax.TaxBracket{1000, 5000, 0.1},
 				tax.TaxBracket{5000, 10000, 0.2},
@@ -71,7 +71,7 @@ func getCalculateTaxTestCases() []calculateTaxTestCase {
 		},
 		{
 			inputValue: 369852,
-			inputTextBrackets: []tax.TaxBracket{
+			inputTaxBrackets: []tax.TaxBracket{
 				tax.TaxBracket{0, 1000, 0},
 				tax.TaxBracket{1000, 5000, 0.1},
 				tax.TaxBracket{5000, 10000, 0.2},
@@ -83,7 +83,7 @@ func getCalculateTaxTestCases() []calculateTaxTestCase {
 		},
 		{
 			inputValue: 75000,
-			inputTextBrackets: []tax.TaxBracket{
+			inputTaxBrackets: []tax.TaxBracket{
 				tax.TaxBracket{0,9875,0.1},
 				tax.TaxBracket{9875,40125,0.12},
 				tax.TaxBracket{40125,85525,0.22},
@@ -98,7 +98,7 @@ func getCalculateTaxTestCases() []calculateTaxTestCase {
 		},
 		{
 			inputValue: 75045.45,
-			inputTextBrackets: []tax.TaxBracket{
+			inputTaxBrackets: []tax.TaxBracket{
 				tax.TaxBracket{0,9875,0.1},
 				tax.TaxBracket{9875,40125,0.12},
 				tax.TaxBracket{40125,85525,0.22},

@@ -6,14 +6,14 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	tax "code-cadets-2021/homework_1/task_1/progressive_tax"
+	tax "code-cadets-2021/homework_1/task_1/tax"
 )
 
 func TestCalculateTax(t *testing.T) {
 	for index, testCase := range getCalculateTaxTestCases() {
 		Convey(fmt.Sprintf("Test case %d: %v", index, testCase), t, func() {
 
-			actualOutput, actualErr := tax.CalculateTax(testCase.inputValue, testCase.inputTextBrackets)
+			actualOutput, actualErr := tax.CalculateTax(testCase.inputValue, testCase.inputTaxBrackets)
 
 			if testCase.expectingError {
 				So(actualErr, ShouldBeNil)
@@ -25,11 +25,11 @@ func TestCalculateTax(t *testing.T) {
 	}
 }
 
-func TestGetTaxBrackets(t *testing.T) {
+func TestGetTaxBracketsFromFile(t *testing.T) {
 	for index, testCase := range getGetTaxBracketsTestCases() {
 		Convey(fmt.Sprintf("Test case %d: %v", index, testCase), t, func() {
 
-			actualOutput, actualErr := tax.GetTaxBrackets(testCase.inputFile)
+			actualOutput, actualErr := tax.GetTaxBracketsFromFile(testCase.inputFile)
 
 			if testCase.expectingError {
 				So(actualErr, ShouldBeNil)
