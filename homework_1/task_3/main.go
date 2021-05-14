@@ -2,35 +2,33 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
-	"strings"
-	"time"
+	"net/http"
 
-	"github.com/sethgrid/pester"
+	"github.com/pkg/errors"
 )
 
+const pokemonURL = "https://pokeapi.co/api/v2/pokemon/"
+
 type pokemon struct {
-	Location_area_encounters	string
-	Name						string
+	LocationURL string `json:"location_area_encounters"`
+	Name        string `json:"name"`
 }
 
 type location struct {
-	Location_area				map[string]string
+	Locations map[string]string `json:"location_area"`
 }
 
-
-func linearBackoff(retry int) time.Duration {
-	return time.Duration(retry) * time.Second
+type pokemonOutput struct {
+	Name      string
+	Locations []string
 }
 
 func getLocations(locationURL string) ([]string, error) {
-	httpClient := pester.New()
-	httpClient.Backoff = linearBackoff
-
-	httpResponse, err := httpClient.Get(locationURL)
+	httpResponse, err := http.Get(locationURL)
 	if err != nil {
 		return nil, err
 	}
@@ -48,19 +46,14 @@ func getLocations(locationURL string) ([]string, error) {
 
 	var locations []string
 	for _, key := range decodedLocations {
-		locations = append(locations, key.Location_area["name"])
+		locations = append(locations, key.Locations["name"])
 	}
 
 	return locations, nil
 }
 
 func getPokemonDetails(idOrName string) (string, []string, error) {
-	pokemonURL := "https://pokeapi.co/api/v2/pokemon/" + idOrName
-
-	httpClient := pester.New()
-	httpClient.Backoff = linearBackoff
-
-	httpResponse, err := httpClient.Get(pokemonURL)
+	httpResponse, err := http.Get(pokemonURL + idOrName)
 	if err != nil {
 		return "", nil, err
 	}
@@ -76,26 +69,25 @@ func getPokemonDetails(idOrName string) (string, []string, error) {
 		return "", nil, err
 	}
 
-	locations, err := getLocations(pokemonDetails.Location_area_encounters)
+	locations, err := getLocations(pokemonDetails.LocationURL)
 	if err != nil {
 		return "", nil, err
 	}
 	return pokemonDetails.Name, locations, nil
 }
 
-
 func main() {
-	var pokemonId string
+	pokemonIdPtr := flag.String("pokemon", "1", "name or ordinal number of the pokemon")
+	flag.Parse()
 
-	fmt.Printf("Please, enter the name or the ordinal number of a pokemon: ")
-	fmt.Scanf("%v", &pokemonId)
-
-	name, locations, err := getPokemonDetails(pokemonId)
+	name, locations, err := getPokemonDetails(*pokemonIdPtr)
 	if err != nil {
 		log.Fatal(
 			errors.WithMessage(err, "this pokemon might not exist"),
 		)
 	}
 
-	fmt.Printf("The pokemon '%s' can be found here: %v\n", name, strings.Join(locations, ", "))
+	pokemonJson, err := json.Marshal(pokemonOutput{name, locations})
+
+	fmt.Printf("%s\n", pokemonJson)
 }
