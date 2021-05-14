@@ -33,6 +33,84 @@ func getCalculateTaxTestCases() []calculateTaxTestCase {
 			expectedOutput: 800.0,
 			expectingError: false,
 		},
+		{
+			inputValue: 0,
+			inputTextBrackets: []tax.TaxBracket{
+				tax.TaxBracket{0, 1000, 0},
+				tax.TaxBracket{1000, 5000, 0.1},
+				tax.TaxBracket{5000, 10000, 0.2},
+				tax.TaxBracket{10000, -1, 0.3},
+			},
+
+			expectedOutput: 0.0,
+			expectingError: false,
+		},
+		{
+			inputValue: 1000,
+			inputTextBrackets: []tax.TaxBracket{
+				tax.TaxBracket{0, 1000, 0},
+				tax.TaxBracket{1000, 5000, 0.1},
+				tax.TaxBracket{5000, 10000, 0.2},
+				tax.TaxBracket{10000, -1, 0.3},
+			},
+
+			expectedOutput: 0.0,
+			expectingError: false,
+		},
+		{
+			inputValue: 5000,
+			inputTextBrackets: []tax.TaxBracket{
+				tax.TaxBracket{0, 1000, 0},
+				tax.TaxBracket{1000, 5000, 0.1},
+				tax.TaxBracket{5000, 10000, 0.2},
+				tax.TaxBracket{10000, -1, 0.3},
+			},
+
+			expectedOutput: 400.0,
+			expectingError: false,
+		},
+		{
+			inputValue: 369852,
+			inputTextBrackets: []tax.TaxBracket{
+				tax.TaxBracket{0, 1000, 0},
+				tax.TaxBracket{1000, 5000, 0.1},
+				tax.TaxBracket{5000, 10000, 0.2},
+				tax.TaxBracket{10000, -1, 0.3},
+			},
+
+			expectedOutput: 109355.59999999999,
+			expectingError: false,
+		},
+		{
+			inputValue: 75000,
+			inputTextBrackets: []tax.TaxBracket{
+				tax.TaxBracket{0,9875,0.1},
+				tax.TaxBracket{9875,40125,0.12},
+				tax.TaxBracket{40125,85525,0.22},
+				tax.TaxBracket{85525,163300,0.24},
+				tax.TaxBracket{163300,207350,0.32},
+				tax.TaxBracket{207350,518400,0.35},
+				tax.TaxBracket{518400,-1,0.37},
+			},
+
+			expectedOutput: 12290.0,
+			expectingError: false,
+		},
+		{
+			inputValue: 75045.45,
+			inputTextBrackets: []tax.TaxBracket{
+				tax.TaxBracket{0,9875,0.1},
+				tax.TaxBracket{9875,40125,0.12},
+				tax.TaxBracket{40125,85525,0.22},
+				tax.TaxBracket{85525,163300,0.24},
+				tax.TaxBracket{163300,207350,0.32},
+				tax.TaxBracket{207350,518400,0.35},
+				tax.TaxBracket{518400,-1,0.37},
+			},
+
+			expectedOutput: 12299.999,
+			expectingError: false,
+		},
 	}
 }
 

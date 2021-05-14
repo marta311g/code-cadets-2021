@@ -18,6 +18,7 @@ func main() {
 		log.Fatal(errors.New("The input value should be greater than zero."))
 	}
 
+	//the brackets are defined in file "brackets.txt"
 	taxBrackets, err := tax.GetTaxBrackets("brackets.txt")
 	if err != nil {
 		log.Fatal(errors.WithMessage(err, "Error while creating tax brackets."))
