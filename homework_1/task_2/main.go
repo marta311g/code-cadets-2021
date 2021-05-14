@@ -18,9 +18,15 @@ func main() {
 		log.Fatal(errors.New("The input value should be greater than zero."))
 	}
 
-	taxBrackets, err := tax.GetTaxBrackets()
+	taxBrackets, err := tax.GetTaxBrackets("brackets.txt")
 	if err != nil {
 		log.Fatal(errors.WithMessage(err, "Error while creating tax brackets."))
 	}
-	fmt.Printf("Za ulaznu vrijednost %.2f iznos poreza je: %.2f\n", inputValue, tax.CalculateTax(inputValue, taxBrackets))
+
+	valueOfTax, err := tax.CalculateTax(inputValue, taxBrackets)
+	if err != nil {
+		log.Fatal(errors.WithMessage(err, "Error while calculating tax."))
+	}
+
+	fmt.Printf("Za ulaznu vrijednost %.2f iznos poreza je: %.2f\n", inputValue, valueOfTax)
 }

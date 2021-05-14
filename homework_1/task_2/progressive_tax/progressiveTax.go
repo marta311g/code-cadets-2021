@@ -11,29 +11,34 @@ import (
 	"github.com/pkg/errors"
 )
 
-type taxBracket struct {
+type TaxBracket struct {
 	LowerLimitInclusive float64
 	UpperLimitExclusive float64
 	Percentage float64
 }
 
-func CalculateTax(inputValue float64, taxBrackets []taxBracket) float64 {
+func CalculateTax(inputValue float64, taxBrackets []TaxBracket) (float64, error) {
 	var tax float64
+
+	if inputValue < 0 {
+		return 0, errors.New("The input value should be greater than zero.")
+	}
+
 	for index, bracket := range taxBrackets {
 		if inputValue <= 0 {
 			break
 		}
 		if index == len(taxBrackets)-1 {
 			tax += inputValue * bracket.Percentage
-			return tax
+			return tax, nil
 		}
 		tax += math.Min((bracket.UpperLimitExclusive - bracket.LowerLimitInclusive), inputValue) * bracket.Percentage
 		inputValue = inputValue - (bracket.UpperLimitExclusive - bracket.LowerLimitInclusive)
 	}
-	return tax
+	return tax, nil
 }
 
-func makeTaxBracket(lineElements []string) taxBracket {
+func makeTaxBracket(lineElements []string) TaxBracket {
 	lowerLimit, err := strconv.ParseFloat(lineElements[0], 64)
 	if err != nil {
 		log.Fatal( errors.WithMessage(err, "invalid lower limit"), )
@@ -46,13 +51,13 @@ func makeTaxBracket(lineElements []string) taxBracket {
 	if err != nil {
 		log.Fatal( errors.WithMessage(err, "invalid lower limit"), )
 	}
-	return taxBracket{ lowerLimit, upperLimit, percentage}
+	return TaxBracket{ lowerLimit, upperLimit, percentage}
 }
 
-func GetTaxBrackets() ([]taxBracket, error) {
-	var taxBrackets []taxBracket
+func GetTaxBrackets(file string) ([]TaxBracket, error) {
+	var taxBrackets []TaxBracket
 
-	f, err := os.Open("brackets.txt")
+	f, err := os.Open(file)
 	if err != nil {
 		return nil, err
 	}
