@@ -77,17 +77,25 @@ func getPokemonDetails(idOrName string) (string, []string, error) {
 }
 
 func main() {
-	pokemonIdPtr := flag.String("pokemon", "1", "name or ordinal number of the pokemon")
+	pokemonId := flag.String("pokemon", "1", "name or ordinal number of the pokemon")
 	flag.Parse()
 
-	name, locations, err := getPokemonDetails(*pokemonIdPtr)
+	name, locations, err := getPokemonDetails(*pokemonId)
 	if err != nil {
 		log.Fatal(
 			errors.WithMessage(err, "this pokemon might not exist"),
 		)
 	}
 
-	pokemonJson, err := json.Marshal(pokemonOutput{name, locations})
+	pokemonJson, err := json.Marshal(pokemonOutput{
+		Name:      name,
+		Locations: locations,
+	})
+	if err != nil {
+		log.Fatal(
+			errors.Wrap(err, "unsuccessful marshal"),
+		)
+	}
 
 	fmt.Printf("%s\n", pokemonJson)
 }
