@@ -10,3 +10,8 @@ func AxilisOfferFeed() *http.AxilisOfferFeed {
 	httpClient := &stdhttp.Client{}
 	return http.NewAxilisOfferFeed(httpClient)
 }
+
+func AxilisSecondOfferFeed() *http.AxilisSecondOfferFeed {
+	httpClient := &stdhttp.Client{}
+	return http.NewAxilisSecondOfferFeed(httpClient)
+}

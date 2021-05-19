@@ -4,37 +4,51 @@ import (
 	"context"
 	"log"
 
+	"github.com/pkg/errors"
+
 	"code-cadets-2021/homework_2/internal/domain/models"
 )
 
 type FeedProcessorService struct {
-	feed  Feed
+	feeds  []Feed
 	queue Queue
 }
 
 func NewFeedProcessorService(
-	feed Feed,
+	feeds []Feed,
 	queue Queue,
 ) *FeedProcessorService {
 	return &FeedProcessorService{
-		feed:  feed,
+		feeds:  feeds,
 		queue: queue,
 	}
 }
 
 func (f *FeedProcessorService) Start(ctx context.Context) error {
-	updates := f.feed.GetUpdates()
 	source := f.queue.GetSource()
+	var updates []chan models.Odd
+
+	for _, feed := range f.feeds {
+		updates = append(updates, feed.GetUpdates())
+	}
 
 	defer close(source)
 	defer log.Printf("shutting down %s", f)
 
-	for update := range updates {
-		update.Coefficient *= 2
-		source <- update
+	counter := 0
+	for {
+		select {
+			case msg, ok := <- updates[counter % len(updates)]:
+				if !ok {
+					return nil
+				}
+				msg.Coefficient *= 2
+				source <- msg
+		}
+		counter += 1
 	}
 
-	return nil
+	return errors.New("feed processor service")
 }
 
 func (f *FeedProcessorService) String() string {
