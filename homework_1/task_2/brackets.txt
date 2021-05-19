@@ -1,5 +1,5 @@
 # brackets should be defined here - format: upperValue;percentage
 1000;0
-5000;0.10
 10000;0.2
+5000;0.1
 -1;0.3
