@@ -2,7 +2,6 @@ package tax
 
 import (
 	"bufio"
-	"log"
 	"math"
 	"os"
 	"strconv"
@@ -14,15 +13,17 @@ import (
 type TaxBracket struct {
 	LowerThreshold float64
 	UpperThreshold float64
-	Percentage float64
+	Percentage     float64
 }
 
-func CalculateTax(inputValue float64, taxBrackets []TaxBracket) (float64, error) {
+
+func CalculateTax(inputValue float64, fileName string) (float64, error) {
 	var tax float64
 	var remainingValue = inputValue
 
-	if inputValue < 0 {
-		return 0, errors.New("The input value should be greater than zero.")
+	taxBrackets, err := getTaxBracketsFromFile(fileName)
+	if err != nil {
+		return 0, errors.Wrap(err, "error while creating tax brackets")
 	}
 
 	for index, bracket := range taxBrackets {
@@ -33,36 +34,45 @@ func CalculateTax(inputValue float64, taxBrackets []TaxBracket) (float64, error)
 			tax += remainingValue * bracket.Percentage
 			return tax, nil
 		}
-		tax += math.Min((bracket.UpperThreshold - bracket.LowerThreshold), remainingValue) * bracket.Percentage
+		tax += math.Min((bracket.UpperThreshold-bracket.LowerThreshold), remainingValue) * bracket.Percentage
 		remainingValue = remainingValue - (bracket.UpperThreshold - bracket.LowerThreshold)
 	}
 	return tax, nil
 }
 
-func makeTaxBracket(lowerTresholdString, upperThresholdString, percentageString string) TaxBracket {
-	lowerTreshold, err := strconv.ParseFloat(lowerTresholdString, 64)
-	if err != nil {
-		log.Fatal( errors.WithMessage(err, "invalid lower limit"))
-	}
-	upperThreshold, err := strconv.ParseFloat(upperThresholdString, 64)
-	if err != nil {
-		log.Fatal( errors.WithMessage(err, "invalid upper limit"))
-	}
-	percentage, err := strconv.ParseFloat(percentageString, 64)
-	if err != nil {
-		log.Fatal( errors.WithMessage(err, "invalid percentage"))
-	}
+func makeSortedTaxBrackets(text []string) ([]TaxBracket, error) {
+	var taxBrackets []TaxBracket
+	noOfLines := 0
+	for _, line := range text {
+		if !strings.HasPrefix(line, "#") {
+			noOfLines += 1
+			elements := strings.Split(line, ";")
+			if len(elements) != 2 {
+				return nil, errors.New("file not formatted correctly")
+			}
 
-	if upperThreshold < lowerTreshold && upperThreshold != -1 {
-		upperThreshold, lowerTreshold = lowerTreshold, upperThreshold
-	}
+			upperThreshold, _ := strconv.ParseFloat(elements[0], 64)
 
-	return TaxBracket{ lowerTreshold, upperThreshold, percentage}
+			lowerTreshold := 0.0
+			if noOfLines > 1 {
+				lowerTreshold = taxBrackets[noOfLines-2].UpperThreshold
+			}
+			percentage, err := strconv.ParseFloat(elements[1], 64)
+			if err != nil {
+				return nil, errors.Wrap(err, "invalid percentage")
+			}
+
+			taxBrackets = append(taxBrackets, TaxBracket{
+				LowerThreshold: lowerTreshold,
+				UpperThreshold: upperThreshold,
+				Percentage:     percentage,
+			})
+		}
+	}
+	return taxBrackets, nil
 }
 
-func GetTaxBracketsFromFile(file string) ([]TaxBracket, error) {
-	var taxBrackets []TaxBracket
-
+func getTaxBracketsFromFile(file string) ([]TaxBracket, error) {
 	f, err := os.Open(file)
 	if err != nil {
 		return nil, err
@@ -79,17 +89,47 @@ func GetTaxBracketsFromFile(file string) ([]TaxBracket, error) {
 
 	defer f.Close()
 
-	for index, line := range text {
+	var sortedLines []string
+	noOfLines := 0
+	for _, line := range text {
 		if !strings.HasPrefix(line, "#") {
-			lowerTreshold := "0"
-			if index > 1 {
-				lowerTreshold = strings.Split(text[index-1], ";")[0]
+			noOfLines += 1
+			elements := strings.Split(line, ";")
+			if len(elements) != 2 {
+				return nil, errors.New("file not formatted correctly")
 			}
-			upperThreshold := strings.Split(line, ";")[0]
-			percentage := strings.Split(line, ";")[1]
 
-			taxBrackets = append(taxBrackets, makeTaxBracket(lowerTreshold, upperThreshold, percentage))
+			upperThreshold, err := strconv.ParseFloat(elements[0], 64)
+			if err != nil {
+				return nil, errors.Wrap(err, "invalid upper limit")
+			}
+
+			for index, sortedLine := range sortedLines {
+				if len(sortedLines) == 0 {
+					sortedLines = append(sortedLines, line)
+					break
+				}
+				savedUpperTreshold, _ := strconv.ParseFloat(strings.Split(sortedLine, ";")[0], 64)
+				if (upperThreshold < savedUpperTreshold || savedUpperTreshold == -1) && upperThreshold != -1 {
+					sortedLines = append(sortedLines[:index+1], sortedLines[index:]...)
+					sortedLines[index] = line
+					break
+				}
+				if index == len(sortedLines)-1 || upperThreshold == -1 {
+					sortedLines = append(sortedLines, line)
+					break
+				}
+			}
+			if len(sortedLines) < noOfLines {
+				sortedLines = append(sortedLines, line)
+			}
 		}
 	}
+
+	taxBrackets, err := makeSortedTaxBrackets(sortedLines)
+	if err != nil {
+		return nil, err
+	}
+
 	return taxBrackets, nil
 }

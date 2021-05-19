@@ -15,18 +15,13 @@ func main() {
 	fmt.Scanf("%f", &inputValue)
 
 	if inputValue < 0 {
-		log.Fatal(errors.New("The input value should be greater than zero."))
+		log.Fatal(errors.New("the input value should be greater than zero"))
 	}
 
 	//the brackets are defined in file "brackets.txt"
-	taxBrackets, err := tax.GetTaxBracketsFromFile("brackets.txt")
+	valueOfTax, err := tax.CalculateTax(inputValue, "brackets.txt")
 	if err != nil {
-		log.Fatal(errors.WithMessage(err, "Error while creating tax brackets."))
-	}
-
-	valueOfTax, err := tax.CalculateTax(inputValue, taxBrackets)
-	if err != nil {
-		log.Fatal(errors.WithMessage(err, "Error while calculating tax."))
+		log.Fatal(errors.WithMessage(err, "error while calculating tax"))
 	}
 
 	fmt.Printf("Za ulaznu vrijednost %.2f iznos poreza je: %.2f\n", inputValue, valueOfTax)
