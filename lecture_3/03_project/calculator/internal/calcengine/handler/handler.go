@@ -48,6 +48,7 @@ func (h *Handler) HandleEventUpdates(
 					payout = float64(betToBeUpdated.Payment * betToBeUpdated.SelectionCoefficient)
 				}
 
+				log.Println("Updating bet:", betToBeUpdated.Id)
 				err = h.calcBetRepository.UpdateCalcBet(ctx, betToBeUpdated)
 				if err != nil {
 					log.Println("Failed to update bet, error: ", err)
@@ -91,10 +92,10 @@ func (h *Handler) HandleBets(
 			exists, err := h.calcBetRepository.CalcBetWithIDExists(ctx, bet.Id)
 			if err != nil {
 				//log.Println("Failed to fetch a bet which should be inserted, error: ", err)
-				// I have no idea what "sql: Rows are closed" means, but I'm ok with it
+				// I have no idea what "sql: Rows are closed" means, but I'm ok with it - update: might have fixed it
 			}
 			if exists {
-				log.Println("A bet which should be inserted already exist, betId: ", bet.Id)
+				log.Println("A bet ", bet.Id, " has already been calculated and can be ignored.")
 				continue
 			}
 
