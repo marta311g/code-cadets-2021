@@ -96,7 +96,7 @@ func (r *BetRepository) GetBetsByUserId(ctx context.Context, userId string) ([]d
 }
 
 func (r *BetRepository) queryGetBetsByCustomerID(ctx context.Context, userId string) ([]storagemodels.Bet, error) {
-	row, err := r.dbExecutor.QueryContext(ctx, "SELECT * FROM bets WHERE customerId='"+userId+"';")
+	row, err := r.dbExecutor.QueryContext(ctx, "SELECT * FROM bets WHERE customer_id='"+userId+"';")
 	if err != nil {
 		return []storagemodels.Bet{}, err
 	}

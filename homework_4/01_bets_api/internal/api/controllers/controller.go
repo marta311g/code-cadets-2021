@@ -50,6 +50,16 @@ func (e *Controller) GetBetByID() gin.HandlerFunc {
 
 func (e *Controller) GetBetsByUser() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		userId := ctx.Param("id")
+
+		betsResponse, err := e.dbService.GetBetsByUser(userId)
+		if err != nil {
+			log.Println(err)
+			ctx.String(http.StatusNotFound, "no bets for this user")
+			return
+		}
+
+		ctx.JSON(http.StatusOK, betsResponse)
 	}
 }
 

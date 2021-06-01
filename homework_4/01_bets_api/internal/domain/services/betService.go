@@ -3,9 +3,8 @@ package services
 import (
 	"context"
 	"github.com/pkg/errors"
-	"github.com/superbet-group/code-cadets-2021/homework_4/01_bets_api/internal/domain/mappers"
-
 	"github.com/superbet-group/code-cadets-2021/homework_4/01_bets_api/internal/api/controllers/models"
+	"github.com/superbet-group/code-cadets-2021/homework_4/01_bets_api/internal/domain/mappers"
 	"github.com/superbet-group/code-cadets-2021/homework_4/01_bets_api/internal/infrastructure/sqlite"
 )
 
