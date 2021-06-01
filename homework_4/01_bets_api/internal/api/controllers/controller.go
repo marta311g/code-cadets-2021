@@ -25,16 +25,6 @@ func NewController(dbService DbService, dbExecutor sqlite.DatabaseExecutor) *Con
 // GetBetByID handlers gets the bet with id.
 func (e *Controller) GetBetByID() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
-		// get bet from db??????????????????????
-		// get id from url
-		// query from db by id
-
-		// marshal it
-
-		// send it
-		// send status code
-
 		id := ctx.Param("id")
 
 		betResponse, err := e.dbService.GetBetByID(id, e.dbExecutor) //get id from uri
@@ -65,5 +55,15 @@ func (e *Controller) GetBetsByUser() gin.HandlerFunc {
 
 func (e *Controller) GetBetsByStatus() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		status := ctx.Query("status")
+
+		betsResponse, err := e.dbService.GetBetsByStatus(status)
+		if err != nil {
+			log.Println(err)
+			ctx.String(http.StatusNotFound, "no bets with this status")
+			return
+		}
+
+		ctx.JSON(http.StatusOK, betsResponse)
 	}
 }

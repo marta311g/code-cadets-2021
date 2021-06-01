@@ -12,7 +12,7 @@ import (
 
 const betByIDPath = "/bet/:id"
 const betsByUserPath = "/user/:id/bets"
-const betsByStatusPath = "/bets?status={parameter}"
+const betsByStatusPath = "/bets"
 
 // WebServer Api server
 type WebServer struct {

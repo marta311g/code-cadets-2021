@@ -31,10 +31,10 @@ func (e BetService) GetBetByID(id string, dbExecutor sqlite.DatabaseExecutor) (m
 	bet, exists, err := betRepository.GetBetByID(context.Background(), id)
 
 	if err != nil {
-		return models.BetResponseDto{}, errors.WithMessage(err, "error")
+		return models.BetResponseDto{}, err
 	}
 	if !exists {
-		return models.BetResponseDto{}, errors.WithMessage(err, "doesn't exist")
+		return models.BetResponseDto{}, errors.WithMessage(err, "bet "+id+" doesn't exist")
 	}
 
 	return bet, nil
@@ -46,15 +46,26 @@ func (e BetService) GetBetsByUser(userId string) ([]models.BetResponseDto, error
 	bets, exists, err := betRepository.GetBetsByUserId(context.Background(), userId)
 
 	if err != nil {
-		return []models.BetResponseDto{}, errors.WithMessage(err, "error")
+		return []models.BetResponseDto{}, err
 	}
 	if !exists {
-		return []models.BetResponseDto{}, errors.WithMessage(err, "doesn't exist")
+		return []models.BetResponseDto{}, errors.WithMessage(err, "no bets for this user "+userId)
 	}
 
 	return bets, nil
 }
 
 func (e BetService) GetBetsByStatus(status string) ([]models.BetResponseDto, error) {
-	return []models.BetResponseDto{}, nil
+	betMapper := newBetMapper()
+	betRepository := sqlite.NewBetRepository(e.dbExecutor, betMapper)
+	bets, exists, err := betRepository.GetBetsByStatus(context.Background(), status)
+
+	if err != nil {
+		return []models.BetResponseDto{}, err
+	}
+	if !exists {
+		return []models.BetResponseDto{}, errors.WithMessage(err, "no bets with status "+status)
+	}
+
+	return bets, nil
 }
