@@ -17,9 +17,9 @@ func main() {
 	signalHandler := bootstrap.SignalHandler()
 	api := bootstrap.Api(rabbitMqChannel)
 
-	log.Println("Bootstrap finished. Event API is starting")
+	log.Println("Bootstrap finished. Bet API is starting")
 
 	tasks.RunTasks(signalHandler, api)
 
-	log.Println("Event API finished gracefully")
+	log.Println("Bet API finished gracefully")
 }

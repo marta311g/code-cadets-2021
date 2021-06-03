@@ -12,9 +12,8 @@ func NewBetValidator() *BetValidator {
 
 // BetIsValid checks if bet is valid.
 func (e *BetValidator) BetIsValid(betInsertRequestDto models.BetInsertRequestDto) bool {
-	if betInsertRequestDto.CustomerId != "" && betInsertRequestDto.SelectionId != "" && (betInsertRequestDto.SelectionCoefficient != 0.0 || betInsertRequestDto.SelectionCoefficient <= 10.0) && (betInsertRequestDto.Payment >= 2.0 || betInsertRequestDto.Payment <= 100.0) {
+	if betInsertRequestDto.CustomerId != "" && betInsertRequestDto.SelectionId != "" && (betInsertRequestDto.SelectionCoefficient != 0.0 && betInsertRequestDto.SelectionCoefficient <= 10.0) && (betInsertRequestDto.Payment >= 2.0 && betInsertRequestDto.Payment <= 100.0) {
 		return true
 	}
-
 	return false
 }

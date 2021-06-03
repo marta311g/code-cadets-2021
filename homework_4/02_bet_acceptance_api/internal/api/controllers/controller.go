@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +28,6 @@ func (e *Controller) InsertBet() gin.HandlerFunc {
 		var betInsertRequestDto models.BetInsertRequestDto
 		err := ctx.ShouldBindWith(&betInsertRequestDto, binding.JSON)
 		if err != nil {
-			log.Println("error")
 			ctx.String(http.StatusBadRequest, "request is not valid.")
 			return
 		}
