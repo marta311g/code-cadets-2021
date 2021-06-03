@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 const activeBetsURL = "/bets?status=active"
@@ -39,6 +40,7 @@ func getActiveEvents() ([]string, error) {
 }
 
 func postEventUpdates(eventIds []string) error {
+	rand.Seed(time.Now().UTC().UnixNano())
 	status := []string{"won", "lost"}
 	for _, eventId := range eventIds {
 
