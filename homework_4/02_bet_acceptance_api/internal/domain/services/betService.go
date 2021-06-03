@@ -13,6 +13,6 @@ func NewBetService(betReceivedPublisher BetReceivedPublisher) *BetService {
 }
 
 // InsertBet sends new bet to the queues.
-func (e BetService) InsertBet(customerId string, selectionId string, selectionCoefficient float64, payment float64) error {
+func (e BetService) Publisher(customerId string, selectionId string, selectionCoefficient float64, payment float64) error {
 	return e.betReceivedPublisher.Publish(customerId, selectionId, selectionCoefficient, payment)
 }

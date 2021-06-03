@@ -27,7 +27,6 @@ func NewController(betValidator BetValidator, betService BetService) *Controller
 func (e *Controller) InsertBet() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var betInsertRequestDto models.BetInsertRequestDto
-		log.Println(binding.JSON)
 		err := ctx.ShouldBindWith(&betInsertRequestDto, binding.JSON)
 		if err != nil {
 			log.Println("error")
@@ -40,12 +39,12 @@ func (e *Controller) InsertBet() gin.HandlerFunc {
 			return
 		}
 
-		err = e.betService.InsertBet(betInsertRequestDto.CustomerId, betInsertRequestDto.SelectionId, betInsertRequestDto.SelectionCoefficient, betInsertRequestDto.Payment)
+		err = e.betService.Publisher(betInsertRequestDto.CustomerId, betInsertRequestDto.SelectionId, betInsertRequestDto.SelectionCoefficient, betInsertRequestDto.Payment)
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, "request could not be processed.")
 			return
 		}
 
-		ctx.Status(http.StatusOK)
+		ctx.JSON(http.StatusOK, gin.H{})
 	}
 }

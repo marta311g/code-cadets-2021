@@ -10,7 +10,7 @@ import (
 	"github.com/superbet-group/code-cadets-2021/homework_4/02_bet_acceptance_api/internal/infrastructure/rabbitmq/models"
 )
 
-const contentTypeTextPlain = "text/plain"
+const contentTypeTextPlain = "application/json"
 
 // BetReceivedPublisher handles bet received queue publishing.
 type BetReceivedPublisher struct {
