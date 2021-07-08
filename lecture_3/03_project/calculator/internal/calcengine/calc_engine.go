@@ -54,8 +54,7 @@ func (e *Engine) processBets(ctx context.Context) error {
 		return err
 	}
 
-	newBets := e.handler.HandleBets(ctx, consumedBets)
-	e.publisher.PublishBetsCalculated(ctx, newBets)
+	err = e.handler.HandleBets(ctx, consumedBets)
 
-	return nil
+	return err
 }

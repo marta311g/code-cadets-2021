@@ -98,7 +98,6 @@ func (r *CalcBetRepository) queryGetBetsByEventID(ctx context.Context, eventId s
 	var allBets []storagemodels.Bet
 
 	// This will move to the "next" row for every row.
-	// At least I hope that's what it does.
 	for rows.Next() {
 		var id string
 		var selectionId string
@@ -122,7 +121,7 @@ func (r *CalcBetRepository) queryGetBetsByEventID(ctx context.Context, eventId s
 }
 
 // CalcBetWithIDExists returns True if a bet with the provided id exists.
-// If the bet does not exist, an error will not be returned. <- WRONG and I don't know how to fix it
+// If the bet does not exist, an error will not be returned.
 func (r *CalcBetRepository) CalcBetWithIDExists(ctx context.Context, id string) (bool, error) {
 	_, err := r.queryGetBetByID(ctx, id)
 	if err == sql.ErrNoRows {

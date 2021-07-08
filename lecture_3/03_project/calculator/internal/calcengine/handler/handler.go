@@ -41,18 +41,12 @@ func (h *Handler) HandleEventUpdates(
 				continue
 			}
 
-			payout := 0.0
 			//update bets
 			for _, betToBeUpdated := range bets {
+				payout := 0.0
+
 				if strings.EqualFold(event.Outcome, "won") {
 					payout = float64(betToBeUpdated.Payment * betToBeUpdated.SelectionCoefficient)
-				}
-
-				log.Println("Updating bet:", betToBeUpdated.Id)
-				err = h.calcBetRepository.UpdateCalcBet(ctx, betToBeUpdated)
-				if err != nil {
-					log.Println("Failed to update bet, error: ", err)
-					continue
 				}
 
 				betToBePublished := rabbitmqmodels.BetCalculated{
@@ -76,10 +70,7 @@ func (h *Handler) HandleEventUpdates(
 	return betsCalculated
 }
 
-func (h *Handler) HandleBets(
-	ctx context.Context,
-	bets <-chan rabbitmqmodels.Bet,
-) <-chan rabbitmqmodels.BetCalculated {
+func (h *Handler) HandleBets(ctx context.Context, bets <-chan rabbitmqmodels.Bet) error {
 	resultingBets := make(chan rabbitmqmodels.BetCalculated)
 
 	go func() {
@@ -89,23 +80,28 @@ func (h *Handler) HandleBets(
 			log.Println("Processing bet: ", bet.Id)
 			//if bet not in db
 
-			exists, err := h.calcBetRepository.CalcBetWithIDExists(ctx, bet.Id)
-			if err != nil {
-				//log.Println("Failed to fetch a bet which should be inserted, error: ", err)
-				// I have no idea what "sql: Rows are closed" means, but I'm ok with it - update: might have fixed it
-			}
-			if exists {
-				log.Println("A bet ", bet.Id, " has already been calculated and can be ignored.")
-				continue
-			}
-
-			//insert bet
 			newBet := domainmodels.Bet{
 				Id:                   bet.Id,
 				SelectionId:          bet.SelectionId,
 				SelectionCoefficient: bet.SelectionCoefficient,
 				Payment:              bet.Payment,
 			}
+
+			exists, err := h.calcBetRepository.CalcBetWithIDExists(ctx, bet.Id)
+			if err != nil {
+				log.Println("Failed to fetch a bet which should be inserted, error: ", err)
+				continue
+			}
+			if exists {
+				log.Println("Updating bet:", bet.Id)
+				err = h.calcBetRepository.UpdateCalcBet(ctx, newBet)
+				if err != nil {
+					log.Println("Failed to update bet, error: ", err)
+				}
+				continue
+			}
+
+			//insert bet
 			log.Println("Inserting new bet with id ", bet.Id)
 
 			err = h.calcBetRepository.InsertCalcBet(ctx, newBet)
@@ -116,5 +112,5 @@ func (h *Handler) HandleBets(
 		}
 	}()
 
-	return resultingBets
+	return nil
 }

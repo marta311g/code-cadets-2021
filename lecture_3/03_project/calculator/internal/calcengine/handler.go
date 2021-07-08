@@ -7,5 +7,5 @@ import (
 
 type Handler interface {
 	HandleEventUpdates(ctx context.Context, eventUpdates <-chan rabbitmqmodels.EventUpdate) <-chan rabbitmqmodels.BetCalculated
-	HandleBets(ctx context.Context, bets <-chan rabbitmqmodels.Bet) <-chan rabbitmqmodels.BetCalculated
+	HandleBets(ctx context.Context, bets <-chan rabbitmqmodels.Bet) error
 }

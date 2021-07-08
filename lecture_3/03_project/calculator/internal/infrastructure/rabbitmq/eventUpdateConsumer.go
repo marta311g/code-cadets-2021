@@ -59,6 +59,7 @@ func (c *EventUpdateConsumer) Consume(ctx context.Context) (<-chan models.EventU
 			err := json.Unmarshal(msg.Body, &eventUpdate)
 			if err != nil {
 				log.Println("Failed to unmarshal event update message", msg.Body)
+				continue
 			}
 
 			// Once context is cancelled, stop consuming messages.
