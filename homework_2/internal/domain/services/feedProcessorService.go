@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/pkg/errors"
-
 	"code-cadets-2021/homework_2/internal/domain/models"
 )
 
@@ -38,17 +36,24 @@ func (f *FeedProcessorService) Start(ctx context.Context) error {
 	counter := 0
 	for {
 		select {
-			case msg, ok := <- updates[counter % len(updates)]:
+			case msg1, ok := <- updates[0]:
 				if !ok {
 					return nil
 				}
-				msg.Coefficient *= 2
-				source <- msg
+				msg1.Coefficient *= 2
+				source <- msg1
+			case msg2, ok := <- updates[1]:
+				if !ok {
+					return nil
+				}
+				msg2.Coefficient *= 2
+				source <- msg2
+			case <- ctx.Done():
+				log.Println("processor service: context canceled")
+				return nil
 		}
 		counter += 1
 	}
-
-	return errors.New("feed processor service")
 }
 
 func (f *FeedProcessorService) String() string {

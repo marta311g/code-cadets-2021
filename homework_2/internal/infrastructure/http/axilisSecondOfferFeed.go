@@ -40,12 +40,12 @@ func (a *AxilisSecondOfferFeed) Start(ctx context.Context) error {
 			return nil
 
 		case <-time.After(time.Second * 3):
-			response2, err := a.httpClient.Get(secondFeedURL)
+			response, err := a.httpClient.Get(secondFeedURL)
 			if err != nil {
 				log.Println("axilis offer feed, http get", err)
 				continue
 			}
-			a.processSecondResponse(ctx, response2)
+			a.processSecondResponse(ctx, response)
 		}
 	}
 }
@@ -64,9 +64,8 @@ func (a *AxilisSecondOfferFeed) processSecondResponse(ctx context.Context, respo
 		axilisOdd := strings.Split(odd, ",")
 		coeff, err := strconv.ParseFloat(axilisOdd[3], 64)
 		if err != nil {
-			log.Fatal(
-				errors.WithMessage(err, "parsing coefficient"),
-			)
+			log.Println("parsing coefficient", err)
+			return
 		}
 
 		odd := models.Odd{
