@@ -69,10 +69,10 @@ func (w *WebServer) Start(ctx context.Context) {
 
 // RegisterRoutes registers gin routes
 func (w *WebServer) registerRoutes(ctrl Controller) {
-	w.router.POST(betAcceptancePath, ctrl.InsertBet())
+	w.router.POST(betAcceptancePath, ctrl.PlaceBet())
 }
 
 // Controller handles api calls
 type Controller interface {
-	InsertBet() gin.HandlerFunc
+	PlaceBet() gin.HandlerFunc
 }

@@ -22,8 +22,7 @@ func NewController(betValidator BetValidator, betService BetService) *Controller
 	}
 }
 
-// InsertBet handlers insert bet request.
-func (e *Controller) InsertBet() gin.HandlerFunc {
+func (e *Controller) PlaceBet() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var betInsertRequestDto models.BetInsertRequestDto
 		err := ctx.ShouldBindWith(&betInsertRequestDto, binding.JSON)
