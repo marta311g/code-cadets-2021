@@ -10,13 +10,13 @@ import (
 
 // EventService implements event related functions.
 type BetService struct {
-	dbExecutor sqlite.DatabaseExecutor
+	repository sqlite.BetRepository
 }
 
 // NewEventService creates a new instance of EventService.
-func NewBetService(dbExecutor sqlite.DatabaseExecutor) *BetService {
+func NewBetService(repository sqlite.BetRepository) *BetService {
 	return &BetService{
-		dbExecutor: dbExecutor,
+		repository: repository,
 	}
 }
 
@@ -25,10 +25,8 @@ func newBetMapper() *mappers.BetMapper {
 }
 
 // UpdateEvent sends event update message to the queues.
-func (e BetService) GetBetByID(id string, dbExecutor sqlite.DatabaseExecutor) (models.BetResponseDto, error) {
-	betMapper := newBetMapper()
-	betRepository := sqlite.NewBetRepository(dbExecutor, betMapper)
-	bet, exists, err := betRepository.GetBetByID(context.Background(), id)
+func (e BetService) GetBetByID(id string) (models.BetResponseDto, error) {
+	bet, exists, err := e.repository.GetBetByID(context.Background(), id)
 
 	if err != nil {
 		return models.BetResponseDto{}, err
@@ -41,9 +39,7 @@ func (e BetService) GetBetByID(id string, dbExecutor sqlite.DatabaseExecutor) (m
 }
 
 func (e BetService) GetBetsByUser(userId string) ([]models.BetResponseDto, error) {
-	betMapper := newBetMapper()
-	betRepository := sqlite.NewBetRepository(e.dbExecutor, betMapper)
-	bets, exists, err := betRepository.GetBetsByUserId(context.Background(), userId)
+	bets, exists, err := e.repository.GetBetsByUserId(context.Background(), userId)
 
 	if err != nil {
 		return []models.BetResponseDto{}, err
@@ -56,9 +52,7 @@ func (e BetService) GetBetsByUser(userId string) ([]models.BetResponseDto, error
 }
 
 func (e BetService) GetBetsByStatus(status string) ([]models.BetResponseDto, error) {
-	betMapper := newBetMapper()
-	betRepository := sqlite.NewBetRepository(e.dbExecutor, betMapper)
-	bets, exists, err := betRepository.GetBetsByStatus(context.Background(), status)
+	bets, exists, err := e.repository.GetBetsByStatus(context.Background(), status)
 
 	if err != nil {
 		return []models.BetResponseDto{}, err

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"github.com/superbet-group/code-cadets-2021/homework_4/01_bets_api/internal/infrastructure/sqlite"
 	"log"
 	"net/http"
 
@@ -11,14 +10,12 @@ import (
 // Controller implements handlers for web server requests.
 type Controller struct {
 	dbService  DbService
-	dbExecutor sqlite.DatabaseExecutor
 }
 
 // NewController creates a new instance of Controller
-func NewController(dbService DbService, dbExecutor sqlite.DatabaseExecutor) *Controller {
+func NewController(dbService DbService) *Controller {
 	return &Controller{
 		dbService:  dbService,
-		dbExecutor: dbExecutor,
 	}
 }
 
@@ -27,7 +24,7 @@ func (e *Controller) GetBetByID() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
 
-		betResponse, err := e.dbService.GetBetByID(id, e.dbExecutor) //get id from uri
+		betResponse, err := e.dbService.GetBetByID(id) //get id from uri
 		if err != nil {
 			log.Println(err)
 			ctx.String(http.StatusNotFound, "no bet for this id")

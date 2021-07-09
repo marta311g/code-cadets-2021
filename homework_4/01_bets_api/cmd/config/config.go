@@ -10,7 +10,6 @@ var Cfg Config
 
 // Config contains all the configuration needed for service to work.
 type Config struct {
-	Rabbit rabbitConfig `split_words:"true"`
 	Api    apiConfig    `split_words:"true"`
 	SqliteDatabase string       `split_words:"true"`
 }
@@ -18,13 +17,6 @@ type Config struct {
 type apiConfig struct {
 	ReadWriteTimeoutMs int `split_words:"true" default:"10000"`
 	Port               int `split_words:"true" default:"8081"`
-}
-
-type rabbitConfig struct {
-	PublisherEventUpdateQueueQueue string `split_words:"true"  default:"event-updates"`
-	PublisherExchange              string `split_words:"true" default:""`
-	PublisherMandatory             bool   `split_words:"true" default:"false"`
-	PublisherImmediate             bool   `split_words:"true" default:"false"`
 }
 
 // Load loads the configuration on bootstrap, this avoid injecting the same config object
